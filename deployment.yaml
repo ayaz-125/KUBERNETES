@@ -1,0 +1,56 @@
+# This is for the deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubernetes-test-app
+spec:
+  replicas: 3  # Number of pods  -- this we can show when we deploy the image and then when we run the commands to check the pods ( kubectl get pods -A) then we can see this ( default       kubernetes-test-app-654ff4f565-kzdgv   1/1     Running   0             18s) times the number of the pods we have defined here 
+  selector:
+    matchLabels:
+      app: kubernetes-test-app
+  template:
+    metadata:
+      labels:
+        app: kubernetes-test-app
+    spec:
+      containers:
+      - name: kubernetes-test-app
+        image: kubernetes-test-app:latest
+        imagePullPolicy: Never  # Tell Kubernetes not to pull from a registry
+        # image: vikash95/kubernetes-test-app:latest
+        resources:
+          limits:
+            memory: "64Mi"
+            cpu: "200m"
+        ports:
+        - containerPort: 5000
+
+# This is for the services
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kubernetes-test-app
+spec:
+  selector:
+    app: kubernetes-test-app
+  ports:
+  - port: 8080
+    targetPort: 5000
+
+# There are the various steps which is needed to start the kubernetes
+
+    # step -1 ----> make the app.py file along with html and css file and run it on local host --- Run this command in the terminal ( python app.py)
+    # step -2 ----> make the docker file and create the docker image---- Run this command in the terminal ( docker build -t image_name .)
+    # step -3 ----> run the docker image to make the container -- Run this command in the terminal --- (docker run -p 5000:5000 image_name:latest)
+    # step 4 -----> download the minikube from the chrome and open the powershell as an administration mode and run the command which is on the minikube website to download and configure the minikube 
+    # step 5 -----> run the command to start the minikube--- Run this command in the powershell ( minikube start)
+    # step 6 -----> to check the running status of minikube cluster --- Run this command in the powershell ( minikube status)
+    # step 7 -----> to check the pods details in the minikube cluster --- Run this command in the powershell (kubectl get pods -A)
+    # step 8 -----> to check the nods details in the minikube cluster --- Run this command in the powershell ( kubectl get nods -A)
+    # step 9 -----> to check the list of the image inside the cluster --- Run this command in the powershell (minikube image list)
+    # step 10 -----> to load the docker image on the minikube cluster --- Run this command in the powershell ( minikube image load image_name:latest)
+    # step 11 -----> to deploy the image which is inide the minikube cluster then we have to write the deployment and service file and after this --- Run this command in the terminal ( kubectl app -f deployment.yaml)
+    # step 12 -----> to delete the deployment image from the pods --- Run this command in the terminal ( kubectl delete deployment image_name )
+    # step 13 -----> run this command to check the image which we had deployed ---- Run this command in the powershell ( kubectl get pods -A)
+    
